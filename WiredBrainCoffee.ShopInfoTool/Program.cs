@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using WiredBrainCoffee.DataAccess;
 
 namespace WiredBrainCoffee.ShopInfoTool
@@ -9,7 +10,7 @@ namespace WiredBrainCoffee.ShopInfoTool
         {
             Console.WriteLine("Wired Brain Coffee - Shop Info Tool!");
 
-            Console.WriteLine("Write 'help' to list available commands, " +
+            Console.WriteLine("Write 'help' to list available coffee shop commands, " +
                 "write 'quit' to exit application");
 
             var coffeeShopDataProvider = new CoffeeShopDataProvider();
@@ -32,6 +33,31 @@ namespace WiredBrainCoffee.ShopInfoTool
                     foreach (var coffeeShop in coffeeShops)
                     {
                         Console.WriteLine($"> " + coffeeShop.Location);
+                    }
+                }
+                else
+                {
+                    var foundCoffeeShops = coffeeShops
+                        .Where(x => x.Location.StartsWith(line, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+
+                    if (foundCoffeeShops.Count == 0)
+                    {
+                        Console.WriteLine($"> Command '{line}' not found");
+                    }
+                    else if (foundCoffeeShops.Count == 1)
+                    {
+                        var coffeeShop = foundCoffeeShops.Single();
+                        Console.WriteLine($"> Location: {coffeeShop.Location}");
+                        Console.WriteLine($"> Beans in stock: {coffeeShop.BeansInStockInKg} kg");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"> Multiple matching coffee shop commands found:");
+                        foreach (var coffeeType in foundCoffeeShops)
+                        {
+                            Console.WriteLine($"> {coffeeType.Location}");
+                        }
                     }
                 }
             }
